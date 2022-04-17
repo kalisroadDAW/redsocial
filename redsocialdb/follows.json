@@ -1,0 +1,6 @@
+{ 
+    "_id" : ObjectId("625c52c8515d09659a9bd5dd"), 
+    "user" : ObjectId("6256d9c3ecdeb33e9b939084"), 
+    "followed" : ObjectId("62542463ae524943e2b8cd13"), 
+    "__v" : NumberInt(0)
+}
