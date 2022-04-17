@@ -73,7 +73,7 @@ function getFollowedUsers(req, res){
     Follow.find({"user":userId}).populate({path: 'followed'}).sort('_id').paginate(page, itemsPerPage, (err, following, total)=>{
         if(err) return res.status(500).send({message: 'Error en la petición'});
 
-        if(!following) return res.status(404).send({message: 'No hay usuarios disponibles'});
+        if(!following) return res.status(404).send({message: 'No sigues a ningún usuario'});
 
         return res.status(200).send({
             following,
@@ -122,6 +122,35 @@ function getFollowers (req,res) {
 
 }
 
+//Creamos métodos sin paginar
+
+//Devolver usuarios que sigo y que me siguen
+
+function getMyFollows(req, res){
+    var userId = req.user.sub;
+    
+
+    var find=Follow.find({"user":userId})
+    if(req.params.followed){
+        find=Follow.find({"followed":userId});
+    }
+
+    
+    find.populate('user followed').exec((err, following)=>{
+        if(err) return res.status(500).send({message: 'Error en la petición'});
+        if(!following) return res.status(404).send({message: 'No sigues a ningún usuario'});
+
+        return res.status(200).send({
+            following
+        });
+
+ }  );
+}
+
+
+
+
+
 
 
 
@@ -131,6 +160,7 @@ module.exports={
     saveFollow,
     unfollow,
     getFollowedUsers,
-    getFollowers
+    getFollowers,
+    getMyFollows
 }
 

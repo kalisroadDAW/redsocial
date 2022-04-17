@@ -16,5 +16,6 @@ api.post('/follow',md_auth.ensureAuth,FollowController.saveFollow);
 api.delete('/unfollow/:id',md_auth.ensureAuth,FollowController.unfollow);
 api.get('/following/:id?/:page?',md_auth.ensureAuth,FollowController.getFollowedUsers);
 api.get('/followers/:id?/:page?',md_auth.ensureAuth,FollowController.getFollowers);
+api.get('/get-my-follows/:id?/:page?',md_auth.ensureAuth,FollowController.getMyFollows);
 
 module.exports = api;
