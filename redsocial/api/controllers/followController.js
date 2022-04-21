@@ -130,13 +130,14 @@ function getMyFollows(req, res){
     var userId = req.user.sub;
     
 
-    var find=Follow.find({"user":userId})
+    var find=Follow.find({"user":userId});
+    
     if(req.params.followed){
         find=Follow.find({"followed":userId});
     }
 
     
-    find.populate('user followed').exec((err, following)=>{
+    find.populate( 'user followed').exec((err, following)=>{
         if(err) return res.status(500).send({message: 'Error en la petición'});
         if(!following) return res.status(404).send({message: 'No sigues a ningún usuario'});
 
