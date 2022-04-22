@@ -208,24 +208,34 @@ function getUsuarios(req, res) {
     User.find().sort('_id').paginate(page, itemsPerPage, (err, users, total) => {
         if (err) return res.status(500).send({ message: 'Error en la petición' });
 
+        Follow.find({ 'followed': identity_user_id }).select({ '_id': 0, '__v': 0, 'followed': 0 }).exec((err, usuarios_que_me_siguen) => { //comprueba que el usuario registrado sigue al usuario pasado por la url
+            if (err) return res.status(500).send({ message: 'Error al comprobar el seguimiento' });
+        
+
+        Follow.find({ 'user': identity_user_id }).select({ '_id': 0, '__v': 0, 'user': 0 }).exec((err, usuarios_a_los_que_sigo) => { //muestra todos los 
+            if (err) return res.status(500).send({ message: 'Error al comprobar el seguimiento' });
+
+
         if (!users) return res.status(404).send({ message: 'No hay usuarios disponibles' });
         followUserIds(identity_user_id).then((value) => {
 
 
           return res.status(200).send({
             users,
-            users_following: value.following,
-            users_follow_me: value.followed,
+            usuarios_que_me_siguen,
+            usuarios_a_los_que_sigo,
             total,
             pages: Math.ceil(total / itemsPerPage)
         });
     });
     });
+});
+    });
 
 }
 
 async function followUserIds(user_id) {
-    var following = await Follow.find({ 'user': user_id }).select({ '_id': 0, '_v': 0, 'user': 0 })/* marco campos que no me interesan */.exec(
+    var following =  Follow.find({ 'user': user_id }).select({ '_id': 0, '_v': 0, 'user': 0 })/* marco campos que no me interesan */.exec(
         (err, follows) => {
             var follows_clean = [];
 
@@ -235,7 +245,7 @@ async function followUserIds(user_id) {
             return follows_clean
         }
     );
-    var followed = await Follow.find({ 'followed': user_id }).select({ '_id': 0, '_v': 0, 'followed': 0 }).exec(
+    var followed =  Follow.find({ 'followed': user_id }).select({ '_id': 0, '_v': 0, 'followed': 0 }).exec(
         (err, follows) => {
             var follows_clean = [];
 
