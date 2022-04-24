@@ -23,6 +23,8 @@ api.get('/users/:page?',md_auth.ensureAuth, Usercontroller.getUsuarios)
 api.put('/update-user/:id', md_auth.ensureAuth, Usercontroller.updateUser);
 api.post('/upload-image-user/:id', [md_auth.ensureAuth, md_upload], Usercontroller.uploadImage);
 api.get('/get-image-user/:imageFile', Usercontroller.getImageFile);
+api.get('/counters/:id?', md_auth.ensureAuth, Usercontroller.getCounters);
+
 
 //exportamos el modulo
 

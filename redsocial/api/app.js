@@ -14,6 +14,8 @@ var user_routes = require('./routes/userRoutes');
 
 var follow_routes = require('./routes/followRoutes');
 
+var publication_routes= require('./routes/publicationRoutes');
+
 
 
 
@@ -42,6 +44,8 @@ app.use(bodyParser.json()); //cuando reciba datos de una petición me devolverá
 app.use('/api', user_routes);
 
 app.use('/api', follow_routes);
+
+app.use('/api', publication_routes);
 
 
 

@@ -4,7 +4,7 @@
 
 var mongoose = require('mongoose'); //cargamos el módulo mongoose
 
-var Schema = moongose.Schema; //creamos un objeto schema
+var Schema = mongoose.Schema; //creamos un objeto schema
 
 //más tarde podemos darle nomenclatura científica a los modelos
 

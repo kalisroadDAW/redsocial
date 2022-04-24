@@ -14,6 +14,7 @@ var fs = require('fs');
 
 
 var path = require('path');
+const { get } = require('http');
 
 
 
@@ -208,6 +209,8 @@ function getUsuarios(req, res) {
     User.find().sort('_id').paginate(page, itemsPerPage, (err, users, total) => {
         if (err) return res.status(500).send({ message: 'Error en la petición' });
 
+        //incluimos la posibilidad de listar usuarios que
+
         Follow.find({ 'followed': identity_user_id }).select({ '_id': 0, '__v': 0, 'followed': 0 }).exec((err, usuarios_que_me_siguen) => { //comprueba que el usuario registrado sigue al usuario pasado por la url
             if (err) return res.status(500).send({ message: 'Error al comprobar el seguimiento' });
         
@@ -216,8 +219,7 @@ function getUsuarios(req, res) {
             if (err) return res.status(500).send({ message: 'Error al comprobar el seguimiento' });
 
 
-        if (!users) return res.status(404).send({ message: 'No hay usuarios disponibles' });
-        followUserIds(identity_user_id).then((value) => {
+        
 
 
           return res.status(200).send({
@@ -230,39 +232,9 @@ function getUsuarios(req, res) {
     });
     });
 });
-    });
-
 }
 
-async function followUserIds(user_id) {
-    var following =  Follow.find({ 'user': user_id }).select({ '_id': 0, '_v': 0, 'user': 0 })/* marco campos que no me interesan */.exec(
-        (err, follows) => {
-            var follows_clean = [];
 
-            follows.forEach((follow) => {
-                follows_clean.push(follow.followed);
-            });
-            return follows_clean
-        }
-    );
-    var followed =  Follow.find({ 'followed': user_id }).select({ '_id': 0, '_v': 0, 'followed': 0 }).exec(
-        (err, follows) => {
-            var follows_clean = [];
-
-            follows.forEach((follow) => {
-                follows_clean.push(follow.user);
-            });
-            return follows_clean
-        }
-    );
-
-    return {
-        following: following,
-        followed: followed
-
-   
-}
-}
 
 //creamos el metodo update users
 
@@ -358,6 +330,36 @@ function getImageFile(req, res) {
     });
 }
 
+//crear un método que cuente los seguidores y seguidores
+
+function getCounters (req, res) {
+    var userId = req.user.sub; //recogemos el id del usuario que está logueado
+
+    if (req.params.id) { //si el id del usuario que nos llega por la url es diferente al id del usuario que está logueado
+        userId = req.params.id; //actualizamos el id del usuario que nos llega por la url
+    }
+
+    Follow.find({ 'followed': userId }).exec((err, usuarios_que_me_siguen) => { //comprueba que el usuario registrado sigue al usuario pasado por la url
+        if (err) return res.status(500).send({ message: 'Error al comprobar el seguimiento' });
+    
+
+    Follow.find({ 'user': userId }).exec((err, usuarios_a_los_que_sigo) => { //muestra todos los 
+        if (err) return res.status(500).send({ message: 'Error al comprobar el seguimiento' });
+
+        return res.status(200).send({
+            following: usuarios_que_me_siguen.length,
+            followed: usuarios_a_los_que_sigo.length,
+            //following: usuarios_que_me_siguen,
+            //followed: usuarios_a_los_que_sigo
+        });
+    }); 
+    });
+
+
+   
+
+}
+
 
 
 
@@ -376,5 +378,6 @@ module.exports = {
     getUsuarios,
     updateUser,
     uploadImage,
-    getImageFile
+    getImageFile,
+    getCounters
 }
