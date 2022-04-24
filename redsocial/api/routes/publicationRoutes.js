@@ -8,6 +8,12 @@ var md_auth = require('../middlewares/authenticated'); //middleware de autentica
 
 var api = express.Router(); //cargar el router de express
 
+//desde aqui
+
+
+
+// hasta aqui
+
 
 
 

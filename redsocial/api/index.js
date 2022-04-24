@@ -12,6 +12,7 @@ Prohíbe cierta sintaxis que probablemente sea definida en futuras versiones de 
 //import mongoose
 var mongoose = require('mongoose');
 
+
 /* Qué es mongoose
 Mongoose es una librería para Node.js que nos permite escribir consultas para una base de datos de MongooDB, con características como validaciones, construcción de queries, middlewares, conversión de tipos y algunas otras, que enriquecen la funcionalidad de la base de datos.
 

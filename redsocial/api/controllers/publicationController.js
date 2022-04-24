@@ -172,7 +172,7 @@ function deletePublication(req,res){
 
 //Creamos una función para subir una publicación (un archivo):
 
-function uploadImage(req, res) {
+/*  function uploadImage(req, res) {
     var publicationId = req.params.id; //recogemos el id que nos llega por la url
     var userId = req.user.sub
 
@@ -183,7 +183,7 @@ function uploadImage(req, res) {
      } else { 
         //metodo para subir la imagen   
         if (req.files) {
-            var file_path = req.files.image.path; //recogemos la ruta de la imagen
+            var file_path = req.image.path; //recogemos la ruta de la imagen
             console.log(file_path);
             var file_split = file_path.split('\\'); //separamos la ruta de la imagen para obtener el nombre de la imagen
             console.log(file_split);
@@ -217,9 +217,61 @@ function removeFilesOfUploads(res, file_path, message) { //creamos una función 
         fs.unlink(file_path, (err) => {
             return res.status(200).send({ message: message });
         });
-    }
+    }  */
 
 //creamos el método para obtener la imagen del usuario
+
+function uploadImage(req, res) {
+    var userId = req.user.sub;
+    var publicationId = req.params.id
+
+    Publication.findOne({'user':userId, '_id':publicationId}).exec((err, publication) => {
+        if(publication){
+
+            try {
+                var file_path = req.files.file.path;
+         
+                var file_split = file_path.split('\\');
+                var file_name = file_split[2];
+                var ext_split = file_name.split('\.');
+                var file_ext = ext_split[1];
+         
+         
+               /*  if (userId != req.user.sub) {
+                    return removeFilesOfUploads(res, file_path, 'No tienes permiso para actualizar los datos del usuario');
+                } */
+         
+                if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
+                    
+                    // Actualizar documento de usuario logueado
+                    Publication.findByIdAndUpdate(publicationId, { file: file_name }, { new: true }, (err, imageSaved) => {
+                        if (err) return res.status(500).send({ message: 'Error en la petición' });
+                        if (!imageSaved) return res.status(404).send({ message: 'No se ha podido Actualizar los datos del usuario' });
+                        return res.status(200).send({ file: imageSaved });
+                    });
+                } else {
+                    //en caso de que la extension sea mala
+                    return res.status(200).send({ message: 'Extensión no válida' });
+                }
+         
+            } catch {
+                return res.status(200).send({ message: 'No se han subido Imagenes' });
+            }
+
+
+
+        }else{
+            return res.status(200).send({ message: 'No tienes permiso para actualizar los datos del usuario' });
+        }
+    });
+
+
+
+ 
+ 
+    
+} 
+
 
 function getImageFile(req, res) {
     var image_file = req.params.imageFile; //recogemos el nombre de la imagen que nos llega por la url
@@ -233,6 +285,10 @@ function getImageFile(req, res) {
         }
     });
 }
+
+
+
+
 
 
 
